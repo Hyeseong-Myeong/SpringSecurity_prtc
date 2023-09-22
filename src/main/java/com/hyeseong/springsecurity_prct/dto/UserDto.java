@@ -19,7 +19,6 @@ public class UserDto {
     @AllArgsConstructor
     @Builder
     public static class Request{
-        private String userId;
         private String userPassword;
         private String userName;
         private String userEmail;

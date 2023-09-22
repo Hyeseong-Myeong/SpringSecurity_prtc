@@ -14,8 +14,6 @@ public class BoardDto {
     public static class Request{
         private String boardTitle;
         private String boardContent;
-        //TODO: 여기엔 User 가 와야하는가, UserDto 가 와야하는가?
-        private User user;
     }
 
     @Getter
@@ -25,6 +23,14 @@ public class BoardDto {
         private String boardTitle;
         private String boardContent;
         private int boardView;
-        private User user;
+        private Long userId;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class ListDto{
+        private String boardTitle;
+        private Long userId;
     }
 }

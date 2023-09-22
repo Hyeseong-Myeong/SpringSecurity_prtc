@@ -19,7 +19,6 @@ public class Authority {
     private Long id;
 
     //    private Long id;
-    @Column(name ="authorityName", length = 30)
-    @Enumerated(EnumType.STRING)
-    private UserRole authorityName;
+    @Column(name ="authorityName", length = 50)
+    private String authorityName;
 }

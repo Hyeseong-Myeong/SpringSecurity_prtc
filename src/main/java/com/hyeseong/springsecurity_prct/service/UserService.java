@@ -4,7 +4,6 @@ import com.hyeseong.springsecurity_prct.dto.UserDto;
 import com.hyeseong.springsecurity_prct.entity.Authority;
 import com.hyeseong.springsecurity_prct.entity.Enum.UserRole;
 import com.hyeseong.springsecurity_prct.entity.User;
-import com.hyeseong.springsecurity_prct.repository.AuthorityRepository;
 import com.hyeseong.springsecurity_prct.repository.UserRepository;
 import com.hyeseong.springsecurity_prct.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -20,10 +18,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserService {
+public class UserService{
 
     private final UserRepository userRepository;
-    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -31,27 +28,28 @@ public class UserService {
     @Transactional
     public Long SignUp(UserDto.Request userDto){
         //중복 Email check
-        if(userRepository.findOneByUserEmail(userDto.getUserEmail()).isPresent()){
+        if(userRepository.findByUserEmail(userDto.getUserEmail()).isPresent()){
             //중복 Email이 있는 경우 예외처리
         }
         //중복 ID check
-        if(userRepository.findOneByUserId(userDto.getUserId()).isPresent()){
+        if(userRepository.findWithAuthoritiesByUserEmail(userDto.getUserEmail()).isPresent()){
             //중복 ID가 있는 경우 예외처리
         }
-        UserRole AUTH = UserRole.ROLE_NORMAL;
-        Authority authority;
-        Optional<Authority> optionalAuthority = authorityRepository.findByAuthorityName(AUTH);
-
-        if(optionalAuthority.isPresent()){
-            authority = optionalAuthority.get();
-        }else{
-            authority = Authority.builder()
-                    .authorityName(UserRole.ROLE_NORMAL)
-                    .build();
-        }
+        String AUTH = UserRole.ROLE_NORMAL.toString();
+        Authority authority = Authority.builder()
+                .authorityName(AUTH)
+                .build();
+//        Optional<Authority> optionalAuthority = authorityRepository.findByAuthorityName(AUTH);
+//
+//        if(optionalAuthority.isPresent()){
+//            authority = optionalAuthority.get();
+//        }else{
+//            authority = Authority.builder()
+//                    .authorityName(UserRole.ROLE_NORMAL.toString())
+//                    .build();
+//        }
 
         User user = User.builder()
-                .userId(userDto.getUserId())
                 .userPassword(passwordEncoder.encode(userDto.getUserPassword()))
                 .userName(userDto.getUserName())
                 .userEmail(userDto.getUserEmail())
@@ -62,8 +60,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDto.info getUserWithAuthorities(String loginId){
-        Optional<User> optionalUser =  userRepository.findOneWithAuthoritiesByUserId(loginId);
+    public UserDto.info getUserWithAuthorities(String email ){
+        Optional<User> optionalUser =  userRepository.findWithAuthoritiesByUserEmail(email);
 
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
@@ -79,7 +77,7 @@ public class UserService {
     @Transactional
     public UserDto.Response getMyUserWithAuthorities(){
         Optional<User> optionaluser =  SecurityUtil.getCurrentLoginId()
-                .flatMap(userRepository::findOneWithAuthoritiesByUserId);
+                .flatMap(userRepository::findWithAuthoritiesByUserEmail);
 
         if(optionaluser.isPresent()){
             User user = optionaluser.get();
@@ -90,6 +88,13 @@ public class UserService {
         }else
             return null;
     }
+
+
+
+//    @Transactional
+//    public AuthDto.loginDto LoginUser(){
+//
+//    }
 
 
 

@@ -34,6 +34,11 @@ public class Board extends BaseTimeEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    public void updateBoard(String boardTitle, String boardContent){
+        this.boardTitle = boardTitle;
+        this.boardContent = boardContent;
+    }
+
     @Builder
     public Board(String boardTitle, String boardContent, int boardView, BoardState boardState, User user){
         this.boardTitle = boardTitle;

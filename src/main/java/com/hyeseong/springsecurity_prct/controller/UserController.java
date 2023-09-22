@@ -21,7 +21,7 @@ public class UserController {
     public Long signup(@RequestBody UserDto.Request userDto){
         return userService.SignUp(userDto);
     }
-
+    @CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Authorization")
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     public ResponseEntity<UserDto.Response> getMyUser(){

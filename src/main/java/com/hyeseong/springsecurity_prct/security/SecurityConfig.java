@@ -29,12 +29,12 @@ public class SecurityConfig {
     }
 
     //Spring Security를 적용하지 않을 리소스를 설정
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                // Spring Security should completely ignore URLs starting with /resources/
-                .requestMatchers("/resources/**");
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring()
+//                // Spring Security should completely ignore URLs starting with /resources/
+//                .requestMatchers("/resources/**");
+//    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception  {
@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/api/users/signup").permitAll()
                         .requestMatchers("/api/auth/authenticate").permitAll()
+                        .requestMatchers("/api/boards/list").permitAll()
                         .requestMatchers("/error/**").permitAll()
                         .anyRequest().authenticated()
                 )
